@@ -8,12 +8,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.server.ServerWebExchange;
 
 import br.com.fiap.techchallenge.diegopinho.msstorage.dtos.ProductDTO;
 import br.com.fiap.techchallenge.diegopinho.msstorage.entities.Product;
 import br.com.fiap.techchallenge.diegopinho.msstorage.services.ProductService;
 import br.com.fiap.techchallenge.diegopinho.msstorage.utils.DTOValidator;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,6 +35,17 @@ public class ProductController {
 
   @Autowired
   private DTOValidator validator;
+
+  @GetMapping("/user")
+  public String getUserInfo() {
+    HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+    Long userId = (Long) request.getAttribute("userId");
+    if (userId != null) {
+      return "UserId do usuário autenticado: " + userId;
+    } else {
+      return "Usuário não autenticado ou userId não está disponível.";
+    }
+  }
 
   @GetMapping
   public ResponseEntity<List<Product>> getAll() {
